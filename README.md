@@ -1,4 +1,7 @@
 # soda-player-plus
+
+**The main goal**: preserve player's simplicity with giving to you additional power (customization).
+
 Patch that brings awesome improvements to SodaPlayer
 
 For now it's a patch for [soda player](https://www.sodaplayer.com/) but if I continue development I'll make a standalone app for with this name.
