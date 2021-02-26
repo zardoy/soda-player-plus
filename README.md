@@ -15,6 +15,10 @@ Why this patches?
 
 Full list of feature could be found [in projects](https://github.com/zardoy/soda-player-plus/projects/1).
 
+Sorry for mixing languages here but I don't care.
+
+В папке `patch/` находятся файлы, которые будут заменены у SodaPlayer.
+
 ## FAQ
 
 ### WHY?
