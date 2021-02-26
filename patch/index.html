@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="stylesheet" href="vendor/tether/dist/css/tether.min.css" />
+  <link rel="stylesheet" href="css/window-controls.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="css/tv-overlay.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/drag-overlay.css">
+
+</head>
+
+<body>
+
+  <div id="window-controls">
+    <div class="window-controls-mac chrome">
+      <div class="stoplight">
+        <div class="preload"></div>
+        <div class="close no-drag"></div>
+        <div class="minimize no-drag"></div>
+        <div class="fullscreen enter no-drag"></div>
+        <div class="maximize no-drag"></div>
+      </div>
+    </div>
+
+    <div class="window-controls-win chrome">
+      <div class="buttons">
+        <div class="minimize no-drag">
+          <svg x="0px" y="0px" viewBox="0 0 10 1">
+            <rect fill="#000000" width="10" height="1"></rect>
+          </svg>
+        </div>
+        <div class="maximize no-drag">
+          <svg class="maximize-svg" x="0px" y="0px" viewBox="0 0 10 10">
+            <path fill="#000000" d="M 0 0 L 0 10 L 10 10 L 10 0 L 0 0 z M 1 1 L 9 1 L 9 9 L 1 9 L 1 1 z " />
+          </svg>
+          <svg class="unmaximize-svg" x="0px" y="0px" viewBox="0 0 10 10">
+            <mask id="Mask">
+              <rect fill="#FFFFFF" width="10" height="10"></rect>
+              <path fill="#000000" d="M 3 1 L 9 1 L 9 7 L 8 7 L 8 2 L 3 2 L 3 1 z" />
+              <path fill="#000000" d="M 1 3 L 7 3 L 7 9 L 1 9 L 1 3 z" />
+            </mask>
+            <path fill="#000000" d="M 2 0 L 10 0 L 10 8 L 8 8 L 8 10 L 0 10 L 0 2 L 2 2 L 2 0 z" mask="url(#Mask)" />
+          </svg>
+        </div>
+        <div class="close no-drag">
+          <svg x="0px" y="0px" viewBox="0 0 10 10">
+            <polygon fill="#000000" points="10,1 9,0 5,4 1,0 0,1 4,5 0,9 1,10 5,6 9,10 10,9 6,5"></polygon>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="player">
+
+    <div class="player-interface">
+
+      <div class="tv-overlay">
+        <div class="info-container">
+          <div class="icon">
+            <i class="material-icons"></i>
+          </div>
+          <div class="label">
+            <div class="device-name">
+              <div class="loader hidden"></div>
+              <span></span>
+            </div>
+            <div class="device-type"></div>
+          </div>
+          <div class="cancel-button no-drag">Cancel</div>
+        </div>
+        <div class="screenshot"></div>
+      </div>
+
+      <div class="loader hidden"></div>
+
+      <div class="subtitles-display with-controls"></div>
+
+      <div class="controls chrome" data-locked="1">
+
+        <div class="progressbar no-drag">
+          <input class="slider" type="range" min="0" max="100" value="0" disabled>
+          <div class="buffered-parts"></div>
+        </div>
+
+        <div class="controlbar">
+
+          <div class="button play-pause-button no-drag">
+            <i class="material-icons pause">pause</i>
+            <i class="material-icons play hidden">play_arrow</i>
+            <i class="material-icons replay hidden">replay</i>
+          </div>
+
+          <div class="volume-group no-drag">
+            <div class="button volume-button">
+              <i class="material-icons volume-mute hidden">volume_off</i>
+              <i class="material-icons volume-down hidden">volume_down</i>
+              <i class="material-icons volume-up">volume_up</i>
+            </div>
+            <div class="volume-control">
+              <input class="volume-slider" type="range" min="0" max="100" value="100">
+            </div>
+          </div>
+
+          <div class="timestamp">
+            <span class="current">-:--</span> / <span class="total">-:--</span>
+          </div>
+
+          <div class="timestamp-live">
+            <i class="material-icons">fiber_manual_record</i> LIVE
+          </div>
+
+          <div class="button playlist-button no-drag hidden" data-menu=".playlist-menu">
+            <i class="material-icons">list</i>
+          </div>
+
+          <div class="title"></div>
+
+          <div class="quality">
+            <div class="720p hidden">720p</div>
+            <div class="1080p hidden">1080p</div>
+            <div class="4k hidden">4K</div>
+          </div>
+
+          <div class="spacing"></div>
+
+          <div class="download-quality hidden">
+            <div class="dot"></div>
+          </div>
+
+          <div class="download-speed hidden"></div>
+
+          <div class="button vpn-button no-drag">
+            <i class="material-icons">verified_user</i>
+          </div>
+
+          <div class="button audio-tracks-button no-drag hidden" data-menu=".audio-tracks-menu">
+            <i class="material-icons">hearing</i>
+          </div>
+
+          <div class="button subtitles-button no-drag hidden" data-menu=".subtitles-menu">
+            <i class="material-icons">chat</i>
+          </div>
+
+          <div class="button tv-button no-drag hidden" data-menu=".tv-menu">
+            <i class="material-icons">tv</i>
+          </div>
+
+          <div class="button fullscreen-button no-drag">
+            <i class="material-icons fullscreen-enter">fullscreen</i>
+            <i class="material-icons fullscreen-leave hidden">fullscreen_exit</i>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="dark-layer"></div>
+
+      <div class="menus">
+
+        <div class="menu playlist-menu no-drag hidden">
+          <ul class="list"></ul>
+        </div>
+
+        <div class="menu audio-tracks-menu no-drag hidden">
+          <ul class="list"></ul>
+        </div>
+
+        <div class="menu subtitles-menu no-drag hidden">
+          <div>
+            <ul class="list">
+              <li>
+                <ul class="sublist static">
+                  <li class="subtitle active" data-type="off">Off</li>
+                </ul>
+              </li>
+              <li>
+                <ul class="sublist container"></ul>
+              </li>
+              <li>
+                <ul class="sublist tree"></ul>
+              </li>
+              <li>
+                <ul class="sublist opensubtitles"></ul>
+              </li>
+              <li>
+                <ul class="sublist custom"></ul>
+              </li>
+              <li>
+                <ul class="sublist static">
+                  <li class="subtitle" data-type="add">Add Subtitle...</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="menu tv-menu no-drag hidden">
+          <ul class="list">
+            <li class="static off active" data-uri="off">
+              <div class="icon">
+                <i class="material-icons">computer</i>
+              </div>
+              <div class="info">
+                <div class="name">Off</div>
+                <div class="type">This computer</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="debug hidden"></div>
+
+    </div>
+
+    <div class="player-surface">
+      <div class="surfaces">
+        <div class="mpv hidden"></div>
+        <video class="html5 hidden" autoplay></video>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="home">
+    <div class="content hidden">
+
+      <div class="open-container">
+        <div class="button button-open-file no-drag">Open a .torrent or video file</div>
+        <div class="button button-open-url no-drag">Open a URL, a magnet link<br>or an AceStream link</div>
+        <div class="open-other-ways">
+          You can also drag and drop a .torrent file, a magnet link or multiple video files into this window to open
+          them.
+        </div>
+      </div>
+
+      <div class="default-client-container">
+        <div class="button button-default-torrent-client no-drag">Make Soda Player my default BitTorrent player</div>
+        <div class="button button-default-video-player no-drag">Make Soda Player my default video player</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="drag-overlay" class="hidden">
+    <div class="drop-message">
+      Drop here to open
+      <br>
+      <div class="drop-objects"></div>
+    </div>
+  </div>
+  <!-- PLUS SCRIPTS -->
+  <script src="plus/index.js"></script>
+
+  <script src="vendor/jquery/dist/jquery.slim.min.js"
+    onload="if (typeof require !== 'undefined') window.$ = window.jQuery = module.exports;"></script>
+  <script src="vendor/hls.js/dist/hls.light.min.js"></script>
+  <script src="vendor/tether/dist/js/tether.min.js"></script>
+  <script src="js/renderer/app/window-controls.js"></script>
+  <script src="js/renderer/app/app.js"></script>
+  <script src="js/renderer/app/home.js"></script>
+</body>
+
+</html>
