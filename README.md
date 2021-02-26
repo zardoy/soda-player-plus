@@ -14,3 +14,13 @@ Why this patches?
 - client redesign ...
 
 Full list of feature could be found [in projects](https://github.com/zardoy/soda-player-plus/projects/1).
+
+## FAQ
+
+### WHY?
+
+Too obvious.
+
+### Когда мне уже прилетит по бошке от Freedom Island Privacy Inc.?
+
+Возможна.
