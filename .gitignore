@@ -1,0 +1,4 @@
+node_modules/
+build/
+/patch-script/archive
+/patch-script/patch/

@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "outDir": "../build"
+    }
+}
