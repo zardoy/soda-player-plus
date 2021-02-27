@@ -18,7 +18,7 @@ Soda player isn't hard to rewrite. But I don't really have time to do it. Meanwh
 - [ ] improve command line support
 - [ ] save position for magnet & local files
 
-Full list of feature could be found [in projects](https://github.com/zardoy/soda-player-plus/projects/1).
+Full list of feature see [in projects](https://github.com/zardoy/soda-player-plus/projects/1).
 
 Sorry for mixing languages here but I don't care.
 
