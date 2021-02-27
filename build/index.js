@@ -52,6 +52,9 @@ const getPaths = async () => {
 exports.getPaths = getPaths;
 const isPatchAvailable = async () => {
     const { asarSource } = await exports.getPaths();
+    if (!fs_extra_1.default.existsSync(asarSource)) {
+        return false;
+    }
     const expectedMd5 = "7A751DCD8C97B9974A4CC9B5BCBB2CCD".toLowerCase();
     return (await md5_file_1.default(asarSource)) !== expectedMd5;
 };
