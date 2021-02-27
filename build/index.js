@@ -27,15 +27,16 @@ const adm_zip_1 = __importDefault(require("adm-zip"));
 const asar_1 = __importDefault(require("asar"));
 const child_process_1 = __importDefault(require("child_process"));
 const download_1 = __importDefault(require("download"));
+const fs_1 = __importDefault(require("fs"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
-const promises_1 = __importDefault(require("fs/promises"));
 const md5_file_1 = __importDefault(require("md5-file"));
 const path_1 = __importDefault(require("path"));
 const rimraf_1 = __importDefault(require("rimraf"));
 const semver_1 = __importDefault(require("semver"));
+const fs = fs_1.default.promises;
 const sodaPlayerBase = path_1.default.normalize(`${process.env.LOCALAPPDATA}/sodaplayer/`);
 const getPaths = async () => {
-    const filelist = await promises_1.default.readdir(sodaPlayerBase);
+    const filelist = await fs.readdir(sodaPlayerBase);
     const appDirs = filelist
         .filter(file => file.startsWith("app-"))
         .map(file => file.slice("app-".length));
@@ -58,12 +59,12 @@ exports.isPatchAvailable = isPatchAvailable;
 const filePathRegexps = async (basePath, patchConfig) => {
     for (const { filePath: relativeFilePath, replace } of patchConfig) {
         const filePath = path_1.default.join(basePath, relativeFilePath);
-        let contents = await promises_1.default.readFile(filePath, "utf-8");
+        let contents = await fs.readFile(filePath, "utf-8");
         for (const [regex, replacement] of replace) {
             //@ts-ignore report bug?
             contents = contents.replace(regex, replacement);
         }
-        await promises_1.default.writeFile(filePath, contents);
+        await fs.writeFile(filePath, contents);
     }
 };
 const patchFiles = async (filesBase) => {
@@ -115,11 +116,11 @@ const patchSodaPlayer = async () => {
     if (isDev) {
         // in dev, we're keeping asar.old as original
         if (fs_extra_1.default.existsSync(oldAsarSource)) {
-            await promises_1.default.unlink(asarSource);
-            await promises_1.default.copyFile(oldAsarSource, asarSource);
+            await fs.unlink(asarSource);
+            await fs.copyFile(oldAsarSource, asarSource);
         }
         else {
-            await promises_1.default.copyFile(asarSource, oldAsarSource);
+            await fs.copyFile(asarSource, oldAsarSource);
         }
     }
     asar_1.default.extractAll(asarSource, asarUnpacked);
@@ -130,13 +131,13 @@ const patchSodaPlayer = async () => {
     await patchFiles(asarUnpacked);
     // removing app.asar before creating new one
     if (isDev) {
-        await promises_1.default.unlink(asarSource);
+        await fs.unlink(asarSource);
     }
     else {
         if (fs_extra_1.default.existsSync(oldAsarSource)) {
-            await promises_1.default.unlink(oldAsarSource);
+            await fs.unlink(oldAsarSource);
         }
-        await promises_1.default.rename(asarSource, oldAsarSource);
+        await fs.rename(asarSource, oldAsarSource);
     }
     // creating patched app.asar
     await asar_1.default.createPackage(asarUnpacked, asarSource);
