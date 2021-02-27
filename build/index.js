@@ -79,7 +79,13 @@ const patchFiles = async (filesBase) => {
             replace: [
                 [/<!-- Google Analytics -->.+?<!-- End Google Analytics -->/is, ""],
                 [/<script src="vendor\/jquery\/dist\/jquery\.slim\.min\.js"/is,
-                    `<!-- PLUS SCRIPTS -->\n<script src="plus/index.js"></script>\n\n$&`]
+                    `<!-- PLUS SCRIPTS -->\n<script src="plus/renderer.js"></script>\n\n$&`]
+            ]
+        },
+        {
+            filePath: "package.json",
+            replace: [
+                [/js\/main\/main.js/i, "plus/main.js"]
             ]
         }
     ]);
@@ -115,7 +121,7 @@ const patchSodaPlayer = async () => {
         rimraf_1.default.sync(path_1.default.join(tmpDirForDownloadingPatch, "patch-archive"));
         patchDir = path_1.default.resolve(tmpDirForDownloadingPatch, "patch/soda-player-plus-main/patch");
     }
-    const { asarSource, asarUnpacked, oldAsarSource } = await exports.getPaths();
+    const { asarBaseDir, asarSource, asarUnpacked, oldAsarSource } = await exports.getPaths();
     if (isDev) {
         // in dev, we're keeping asar.old as original
         if (fs_extra_1.default.existsSync(oldAsarSource)) {
@@ -147,11 +153,19 @@ const patchSodaPlayer = async () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     // cleanup
     if (isDev) {
-        console.log(process.env.START_ARGS);
-        child_process_1.default.spawn(`C:/Users/Professional/AppData/Local/sodaplayer/Soda Player.exe ${process.env.START_ARGS || ""}`, [], {
-            detached: true,
-            stdio: "ignore"
-        });
+        const needLogs = process.env.NEED_LOGS === "1", 
+        // specify args for testing. use , as a delimiter
+        startArgs = (process.env.START_ARGS || "").split(",");
+        if (!needLogs) {
+            // real world test
+            child_process_1.default.spawn(path_1.default.join(sodaPlayerBase, `Soda Player.exe`), startArgs, {
+                detached: true,
+                stdio: "ignore"
+            });
+        }
+        else {
+            child_process_1.default.execFileSync(path_1.default.join(asarBaseDir, "../Soda Player.exe"), startArgs, { stdio: "inherit" });
+        }
     }
     else {
         rimraf_1.default.sync(asarUnpacked);
