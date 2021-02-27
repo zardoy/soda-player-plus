@@ -4,32 +4,28 @@
 
 Patch that makes SodaPlayer **much better**.
 
-For now it's a patch for [soda player](https://www.sodaplayer.com/) but if I continue development I'll make a **standalone app** like soda-player.
+For now it's a patch for [Soda Player](https://www.sodaplayer.com/) but if I continue development I'll make a **standalone player** like that one.
 
 ## Why patch?
 
-Soda player isn't hard to rewrite. But I don't really have time to do it. Meanwhile I really need that functionality:
+Soda player isn't hard to rewrite. But I don't really have time to do it now. And because I need that functionality now I keep this patch for a moment.
 
 <!-- - upgraded electron to latest version :fire: -->
 <!-- - upgraded mpv (internal player itself) to latest version :fire::fire::fire: -->
 <!-- - add save position and a lot of keyboard bindnings -->
 <!-- - client redesign ... -->
-- [X] removed google analytics
-- [ ] improve command line support
-- [ ] save position for magnet & local files
 
-Full list of feature see [in projects](https://github.com/zardoy/soda-player-plus/projects/1).
+## Optional Features
 
-Sorry for mixing languages here but I don't care.
+These features are enabled by default:
 
-В папке `patch/` находятся файлы, которые будут заменены у SodaPlayer.
+- [ ] Global Play/Pause Media key
+- [x] Progress Bar
+- ~~[ ] Save position for magnet & local files~~
 
-## FAQ
+For enabling/disabling instructions open DevTools:
 
-### WHY?
+- Windows: `CTRL + SHIFT + I`
+- macOS: <!-- `CMD + ALT + SHIFT + D` -->, then `CMD + ALT + I`
 
-Too obvious.
-
-### Когда мне уже прилетит по бошке от Freedom Island Privacy Inc.?
-
-Возможна.
+For full list of features see [ROADMAP project](https://github.com/zardoy/soda-player-plus/projects/1).
