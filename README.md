@@ -14,7 +14,7 @@ Soda player isn't hard to rewrite. But I don't really have time to do it. Meanwh
 <!-- - upgraded mpv (internal player itself) to latest version :fire::fire::fire: -->
 <!-- - add save position and a lot of keyboard bindnings -->
 <!-- - client redesign ... -->
-- [ ] removed google analytics
+- [X] removed google analytics
 - [ ] improve command line support
 - [ ] save position for magnet & local files
 
