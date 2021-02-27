@@ -29,8 +29,36 @@
     //FEATURE: indicate its a plus version (patched)
     // window title NOT IMPLEMENTED YET
     //FEATURE END
-    // FEATURE: don't hide window control buttons in fullscreen
+    // FEATURE time on center
+    const controlsChrome = document.querySelector(".controls.chrome");
+    // @ts-ignore
+    if (controlsChrome && !document.querySelector("#system_time_display")) {
+        controlsChrome.insertAdjacentHTML("afterbegin", `<div style="
+    position: fixed;
+    z-index: -5;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+"><small id="system_time_display" style="
+    color: white;
+    margin-top: 5px;
+"></small>
+    </div>`);
+        let formatter = new Intl.DateTimeFormat(undefined, {//using system locale
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+        setInterval(() => {
+            // @ts-ignore
+            document.querySelector("#system_time_display").innerText = formatter.format(new Date());
+        }, 1000);
+    }
+    // FEATURE END
     const winButtons = document.querySelector(".window-controls-win > .buttons");
+    // FEATURE: don't hide window control buttons in fullscreen
     const observer = new MutationObserver(() => {
         observer.disconnect();
         winButtons.classList.remove("hidden");
@@ -90,6 +118,12 @@
                 .observe(playButton, {
                     attributeFilter: ["class"]
                 })
+        },
+        winControlsOpacity() {
+            if (winButtons) {
+                // @ts-ignore
+                winButtons.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+            }
         },
         // implement: savePosition
         thumbarButtons() {

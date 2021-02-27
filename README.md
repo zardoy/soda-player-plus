@@ -23,7 +23,8 @@ These features are enabled by default:
 
 - [x] Global Play/Pause Media key
 - [x] Progress Bar
-- [x] Thumbar Buttons
+- [ ] Add opacity for window controls (make them visible) 
+- ~~ [x] Thumbar Buttons~~ (wont fix)
 - ~~[ ] Save position for magnet & local files~~ (won't fix)
 
 For enabling/disabling instructions open DevTools:
