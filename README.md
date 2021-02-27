@@ -6,7 +6,9 @@ Patch that makes SodaPlayer **much better**.
 
 For now it's a patch for [soda player](https://www.sodaplayer.com/) but if I continue development I'll make a **standalone app** like soda-player.
 
-## Why this patch?
+## Why patch?
+
+Soda player isn't hard to rewrite. But I don't really have time to do it. Meanwhile I really need that functionality:
 
 <!-- - upgraded electron to latest version :fire: -->
 <!-- - upgraded mpv (internal player itself) to latest version :fire::fire::fire: -->
