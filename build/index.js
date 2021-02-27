@@ -55,7 +55,7 @@ const isPatchAvailable = async () => {
     if (!fs_extra_1.default.existsSync(asarSource)) {
         return false;
     }
-    const expectedMd5 = "7A751DCD8C97B9974A4CC9B5BCBB2CCD".toLowerCase();
+    const expectedMd5 = "EF259945A88FC946B4C0ABE48573AC30".toLowerCase();
     return (await md5_file_1.default(asarSource)) !== expectedMd5;
 };
 exports.isPatchAvailable = isPatchAvailable;
