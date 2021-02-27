@@ -15,13 +15,16 @@ Soda player isn't hard to rewrite. But I don't really have time to do it now. An
 <!-- - add save position and a lot of keyboard bindnings -->
 <!-- - client redesign ... -->
 
+> Not maintained anymore. I'm done.
+
 ## Optional Features
 
 These features are enabled by default:
 
-- [ ] Global Play/Pause Media key
+- [x] Global Play/Pause Media key
 - [x] Progress Bar
-- ~~[ ] Save position for magnet & local files~~
+- [x] Thumbar Buttons
+- ~~[ ] Save position for magnet & local files~~ (won't fix)
 
 For enabling/disabling instructions open DevTools:
 

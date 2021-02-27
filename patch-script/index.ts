@@ -67,7 +67,13 @@ const patchFiles = async (filesBase: string) => {
             replace: [
                 [/<!-- Google Analytics -->.+?<!-- End Google Analytics -->/is, ""],
                 [/<script src="vendor\/jquery\/dist\/jquery\.slim\.min\.js"/is,
-                    `<!-- PLUS SCRIPTS -->\n<script src="plus/index.js"></script>\n\n$&`]
+                    `<!-- PLUS SCRIPTS -->\n<script src="plus/renderer.js"></script>\n\n$&`]
+            ]
+        },
+        {
+            filePath: "package.json",
+            replace: [
+                [/js\/main\/main.js/i, "plus/main.js"]
             ]
         }
     ]);
@@ -111,7 +117,7 @@ export const patchSodaPlayer = async () => {
         patchDir = path.resolve(tmpDirForDownloadingPatch, "patch/soda-player-plus-main/patch");
     }
 
-    const { asarSource, asarUnpacked, oldAsarSource } = await getPaths();
+    const { asarBaseDir, asarSource, asarUnpacked, oldAsarSource } = await getPaths();
 
     if (isDev) {
         // in dev, we're keeping asar.old as original
@@ -158,11 +164,20 @@ export const patchSodaPlayer = async () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
     // cleanup
     if (isDev) {
-        console.log(process.env.START_ARGS);
-        child_process.spawn(`C:/Users/Professional/AppData/Local/sodaplayer/Soda Player.exe`, [process.env.START_ARGS || ""], {
-            detached: true,
-            stdio: "ignore"
-        });
+        const needLogs = process.env.NEED_LOGS === "1",
+            // specify args for testing. use , as a delimiter
+            startArgs = (process.env.START_ARGS || "").split(",");
+        if (!needLogs) {
+            // real world test
+            child_process.spawn(path.join(sodaPlayerBase, `Soda Player.exe`), startArgs, {
+                detached: true,
+                stdio: "ignore"
+            });
+        } else {
+            child_process.execFileSync(
+                path.join(asarBaseDir, "../Soda Player.exe"), startArgs, { stdio: "inherit" }
+            );
+        }
     } else {
         rimraf.sync(
             asarUnpacked
