@@ -159,7 +159,7 @@ export const patchSodaPlayer = async () => {
     // cleanup
     if (isDev) {
         console.log(process.env.START_ARGS);
-        child_process.spawn(`C:/Users/Professional/AppData/Local/sodaplayer/Soda Player.exe ${process.env.START_ARGS || ""}`, [], {
+        child_process.spawn(`C:/Users/Professional/AppData/Local/sodaplayer/Soda Player.exe`, [process.env.START_ARGS || ""], {
             detached: true,
             stdio: "ignore"
         });
