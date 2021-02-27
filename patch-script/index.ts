@@ -31,6 +31,9 @@ export const getPaths = async () => {
 
 export const isPatchAvailable = async () => {
     const { asarSource } = await getPaths();
+    if (!fse.existsSync(asarSource)) {
+        return false;
+    }
     const expectedMd5 = "7A751DCD8C97B9974A4CC9B5BCBB2CCD".toLowerCase();
     return (await md5File(asarSource)) !== expectedMd5;
 };
