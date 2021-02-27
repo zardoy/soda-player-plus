@@ -2,12 +2,14 @@ import AdmZip from "adm-zip";
 import asar from "asar";
 import child_process from "child_process";
 import download from "download";
+import fsOrig from "fs";
 import fse from "fs-extra";
-import fs from "fs/promises";
 import md5File from "md5-file";
 import path from "path";
 import rimraf from "rimraf";
 import semver from "semver";
+
+const fs = fsOrig.promises;
 
 const sodaPlayerBase = path.normalize(`${process.env.LOCALAPPDATA}/sodaplayer/`);
 
