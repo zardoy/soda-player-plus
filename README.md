@@ -1,14 +1,10 @@
-# soda-player-plus
+# Soda player plus
 
-**The main goal**: preserve player's simplicity with giving to you additional power (customization).
+> Patch that makes SodaPlayer **much better**.
 
-Patch that makes SodaPlayer **much better**.
+Now, I'm looking for a good modern player that supports all formats like mpc, but unfortunately I didn't find that. I'll probably make my own version of something like Soda but for now I'm using this patch as a **workaround only**.
 
-For now it's a patch for [Soda Player](https://www.sodaplayer.com/) but if I continue development I'll make a **standalone player** like that one.
-
-## Why patch?
-
-Soda player isn't hard to rewrite. But I don't really have time to do it now. And because I need that functionality now I keep this patch for a moment.
+<!-- **The main goal in future **: preserve player's simplicity with giving to you additional power (customization). -->
 
 <!-- - upgraded electron to latest version :fire: -->
 <!-- - upgraded mpv (internal player itself) to latest version :fire::fire::fire: -->
@@ -32,4 +28,6 @@ For enabling/disabling instructions open DevTools:
 - Windows: `CTRL + SHIFT + I`
 - macOS: <!-- `CMD + ALT + SHIFT + D` -->, then `CMD + ALT + I`
 
-For full list of features see [ROADMAP project](https://github.com/zardoy/soda-player-plus/projects/1).
+and then copy-paste this: `enableAllFeatures` and press enter.
+
+For full list of features see [ROADMAP project](https://github.com/zardoy/soda-player-plus/projects/1) (done section).
