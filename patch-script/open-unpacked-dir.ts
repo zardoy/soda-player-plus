@@ -1,7 +1,7 @@
 import { existsSync } from "fs-extra";
 import open from "open";
 
-import { getPaths } from "./index";
+import { getPaths } from "./patchElectronApp";
 
 (async () => {
     const { asarUnpacked } = await getPaths();
