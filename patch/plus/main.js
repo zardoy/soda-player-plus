@@ -2,7 +2,7 @@
 
 const enableFullscreen = process.argv.includes("--fullscreen");
 // remove flags since sodaPlayer treats them as input file
-process.argv = process.argv.filter(arg => !arg.startsWith("--"));
+process.argv = process.argv.filter(arg => arg.startsWith("--squirrel") || !arg.startsWith("--"));
 //FEATURE END
 
 require("../js/main/main.js");
