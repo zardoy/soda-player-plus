@@ -51,7 +51,8 @@ export const patchSodaPlayer = async (customPatchDirectory?: string) => {
                 });
                 const patchArchive = path.join(tmpDirForDownloadingPatch, "patch-archive");
                 const adm = new AdmZip(patchArchive);
-                await new Promise(resolve => adm.extractAllToAsync("patch", true, resolve));
+                await new Promise(resolve =>
+                    adm.extractAllToAsync(path.join(tmpDirForDownloadingPatch, "patch"), true, resolve));
                 rimraf.sync(patchArchive);
                 patchDir = path.resolve(tmpDirForDownloadingPatch, "patch/soda-player-plus-main/patch");
             }
