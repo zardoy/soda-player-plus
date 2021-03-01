@@ -6,9 +6,17 @@ import os from "os";
 import path from "path";
 import rimraf from "rimraf";
 
-import { patchElectronApp } from "./patchElectronApp";
+import { AppConfig, patchElectronApp } from "./patchElectronApp";
 
 const fs = fsOrig.promises;
+
+type PatchConfig = Array<{
+    filePath: string;
+    replace: Array<[
+        RegExp,
+        string | ((substring: string, ...args: any[]) => string)
+    ]>;
+}>;
 
 const filePathRegexps = async (basePath: string, patchConfig: PatchConfig) => {
     for (const { filePath: relativeFilePath, replace } of patchConfig) {
@@ -22,11 +30,15 @@ const filePathRegexps = async (basePath: string, patchConfig: PatchConfig) => {
     }
 };
 
-const index = async (customPatchDirectory?: string) => {
+export const sodaPlayerBasicConfig: Omit<AppConfig, "patchContents"> = {
+    appName: "Soda Player",
+    localAppdataDir: "sodaplayer",
+};
+
+export const patchSodaPlayer = async (customPatchDirectory?: string) => {
     const tmpDirForDownloadingPatch = os.tmpdir();
     await patchElectronApp({
-        appName: "Soda Player",
-        localAppdataDirName: "sodaplayer",
+        ...sodaPlayerBasicConfig,
         async patchContents({ contentsDir }) {
             let patchDir: string;
             if (customPatchDirectory) {
