@@ -30,47 +30,51 @@ exports.sodaPlayerBasicConfig = {
 };
 const patchSodaPlayer = async (customPatchDirectory) => {
     const tmpDirForDownloadingPatch = os_1.default.tmpdir();
-    await patchElectronApp_1.patchElectronApp({
-        ...exports.sodaPlayerBasicConfig,
-        async patchContents({ contentsDir }) {
-            let patchDir;
-            if (customPatchDirectory) {
-                patchDir = customPatchDirectory;
-            }
-            else {
-                const downloadPatchUrl = "https://github.com/zardoy/soda-player-plus/archive/main.zip";
-                await download_1.default(downloadPatchUrl, tmpDirForDownloadingPatch, {
-                    filename: "patch-archive"
-                });
-                const patchArchive = path_1.default.join(tmpDirForDownloadingPatch, "patch-archive");
-                const adm = new adm_zip_1.default(patchArchive);
-                await new Promise(resolve => adm.extractAllToAsync("patch", true, resolve));
-                rimraf_1.default.sync(patchArchive);
-                patchDir = path_1.default.resolve(tmpDirForDownloadingPatch, "patch/soda-player-plus-main/patch");
-            }
-            await fs_extra_1.default.copy(patchDir, contentsDir, {
-                overwrite: true,
-            });
-            filePathRegexps(contentsDir, [
-                {
-                    filePath: "index.html",
-                    replace: [
-                        [/<!-- Google Analytics -->.+?<!-- End Google Analytics -->/is, ""],
-                        [/<script src="vendor\/jquery\/dist\/jquery\.slim\.min\.js"/is,
-                            `<!-- PLUS SCRIPTS -->\n<script src="plus/renderer.js"></script>\n\n$&`]
-                    ]
-                },
-                {
-                    filePath: "package.json",
-                    replace: [
-                        [/js\/main\/main.js/i, "plus/main.js"]
-                    ]
+    try {
+        await patchElectronApp_1.patchElectronApp({
+            ...exports.sodaPlayerBasicConfig,
+            async patchContents({ contentsDir }) {
+                let patchDir;
+                if (customPatchDirectory) {
+                    patchDir = customPatchDirectory;
                 }
-            ]);
-        }
-    });
-    if (!customPatchDirectory) {
-        rimraf_1.default.sync(path_1.default.join(tmpDirForDownloadingPatch, "patch"));
+                else {
+                    const downloadPatchUrl = "https://github.com/zardoy/soda-player-plus/archive/main.zip";
+                    await download_1.default(downloadPatchUrl, tmpDirForDownloadingPatch, {
+                        filename: "patch-archive"
+                    });
+                    const patchArchive = path_1.default.join(tmpDirForDownloadingPatch, "patch-archive");
+                    const adm = new adm_zip_1.default(patchArchive);
+                    await new Promise(resolve => adm.extractAllToAsync(path_1.default.join(tmpDirForDownloadingPatch, "patch"), true, resolve));
+                    rimraf_1.default.sync(patchArchive);
+                    patchDir = path_1.default.resolve(tmpDirForDownloadingPatch, "patch/soda-player-plus-main/patch");
+                }
+                await fs_extra_1.default.copy(patchDir, contentsDir, {
+                    overwrite: true,
+                });
+                filePathRegexps(contentsDir, [
+                    {
+                        filePath: "index.html",
+                        replace: [
+                            [/<!-- Google Analytics -->.+?<!-- End Google Analytics -->/is, ""],
+                            [/<script src="vendor\/jquery\/dist\/jquery\.slim\.min\.js"/is,
+                                `<!-- PLUS SCRIPTS -->\n<script src="plus/renderer.js"></script>\n\n$&`]
+                        ]
+                    },
+                    {
+                        filePath: "package.json",
+                        replace: [
+                            [/js\/main\/main.js/i, "plus/main.js"]
+                        ]
+                    }
+                ]);
+            }
+        });
+    }
+    finally {
+        const patchDir = path_1.default.join(tmpDirForDownloadingPatch, "patch");
+        if (fs_extra_1.default.existsSync(patchDir))
+            rimraf_1.default.sync(patchDir);
     }
 };
 exports.patchSodaPlayer = patchSodaPlayer;
