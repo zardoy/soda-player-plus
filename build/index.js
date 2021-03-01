@@ -1,64 +1,18 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.patchSodaPlayer = exports.isPatchAvailable = exports.getPaths = void 0;
+exports.patchSodaPlayer = exports.sodaPlayerBasicConfig = void 0;
 const adm_zip_1 = __importDefault(require("adm-zip"));
-const asar_1 = __importDefault(require("asar"));
-const child_process_1 = __importDefault(require("child_process"));
 const download_1 = __importDefault(require("download"));
 const fs_1 = __importDefault(require("fs"));
 const fs_extra_1 = __importDefault(require("fs-extra"));
-const md5_file_1 = __importDefault(require("md5-file"));
+const os_1 = __importDefault(require("os"));
 const path_1 = __importDefault(require("path"));
 const rimraf_1 = __importDefault(require("rimraf"));
-const semver_1 = __importDefault(require("semver"));
+const patchElectronApp_1 = require("./patchElectronApp");
 const fs = fs_1.default.promises;
-const sodaPlayerBase = path_1.default.normalize(`${process.env.LOCALAPPDATA}/sodaplayer/`);
-const getPaths = async () => {
-    const filelist = await fs.readdir(sodaPlayerBase);
-    const appDirs = filelist
-        .filter(file => file.startsWith("app-"))
-        .map(file => file.slice("app-".length));
-    const biggestVersion = semver_1.default.sort(appDirs).reverse()[0];
-    const asarBaseDir = path_1.default.join(sodaPlayerBase, `app-${biggestVersion}/resources`);
-    return {
-        asarBaseDir,
-        asarSource: path_1.default.join(asarBaseDir, "app.asar"),
-        oldAsarSource: path_1.default.join(asarBaseDir, "app.asar.old"),
-        asarUnpacked: path_1.default.join(asarBaseDir, "app")
-    };
-};
-exports.getPaths = getPaths;
-const isPatchAvailable = async () => {
-    const { asarSource } = await exports.getPaths();
-    if (!fs_extra_1.default.existsSync(asarSource)) {
-        return false;
-    }
-    const expectedMd5 = "EF259945A88FC946B4C0ABE48573AC30".toLowerCase();
-    return (await md5_file_1.default(asarSource)) !== expectedMd5;
-};
-exports.isPatchAvailable = isPatchAvailable;
 const filePathRegexps = async (basePath, patchConfig) => {
     for (const { filePath: relativeFilePath, replace } of patchConfig) {
         const filePath = path_1.default.join(basePath, relativeFilePath);
@@ -70,111 +24,53 @@ const filePathRegexps = async (basePath, patchConfig) => {
         await fs.writeFile(filePath, contents);
     }
 };
-const patchFiles = async (filesBase) => {
-    // patch index.html
-    // i don't use cheerio since its really bad. regex is much reliable
-    filePathRegexps(filesBase, [
-        {
-            filePath: "index.html",
-            replace: [
-                [/<!-- Google Analytics -->.+?<!-- End Google Analytics -->/is, ""],
-                [/<script src="vendor\/jquery\/dist\/jquery\.slim\.min\.js"/is,
-                    `<!-- PLUS SCRIPTS -->\n<script src="plus/renderer.js"></script>\n\n$&`]
-            ]
-        },
-        {
-            filePath: "package.json",
-            replace: [
-                [/js\/main\/main.js/i, "plus/main.js"]
-            ]
-        }
-    ]);
+exports.sodaPlayerBasicConfig = {
+    appName: "Soda Player",
+    localAppdataDir: "sodaplayer",
 };
-const patchSodaPlayer = async () => {
-    if (!fs_extra_1.default.existsSync(sodaPlayerBase)) {
-        throw new Error("You must install SodaPlayer first!");
-    }
-    const isDev = process.env.DEV_MODE;
-    let patchDir;
-    const tmpDirForDownloadingPatch = __dirname;
-    if (isDev) {
-        (await Promise.resolve().then(() => __importStar(require("dotenv")))).config({
-            path: path_1.default.join(__dirname, ".env")
-        });
-        const psList = (await Promise.resolve().then(() => __importStar(require("ps-list")))).default;
-        const { killer } = await Promise.resolve().then(() => __importStar(require("cross-port-killer")));
-        const pid = (await psList())
-            .find(({ name }) => /soda/i.test(name));
-        if (pid) {
-            await killer.killByPid(pid.pid.toString());
-            await new Promise(resolve => setTimeout(resolve, 500));
-        }
-        patchDir = path_1.default.join(__dirname, "../patch");
-    }
-    else {
-        const url = "https://github.com/zardoy/soda-player-plus/archive/main.zip";
-        await download_1.default(url, tmpDirForDownloadingPatch, {
-            filename: "patch-archive"
-        });
-        const adm = new adm_zip_1.default(path_1.default.join(tmpDirForDownloadingPatch, "patch-archive"));
-        await new Promise(resolve => adm.extractAllToAsync("patch", true, resolve));
-        rimraf_1.default.sync(path_1.default.join(tmpDirForDownloadingPatch, "patch-archive"));
-        patchDir = path_1.default.resolve(tmpDirForDownloadingPatch, "patch/soda-player-plus-main/patch");
-    }
-    const { asarBaseDir, asarSource, asarUnpacked, oldAsarSource } = await exports.getPaths();
-    if (isDev) {
-        // in dev, we're keeping asar.old as original
-        if (fs_extra_1.default.existsSync(oldAsarSource)) {
-            await fs.unlink(asarSource);
-            await fs.copyFile(oldAsarSource, asarSource);
-        }
-        else {
-            await fs.copyFile(asarSource, oldAsarSource);
-        }
-    }
-    asar_1.default.extractAll(asarSource, asarUnpacked);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    await fs_extra_1.default.copy(patchDir, asarUnpacked, {
-        overwrite: true,
-    });
-    await patchFiles(asarUnpacked);
-    // removing app.asar before creating new one
-    if (isDev) {
-        await fs.unlink(asarSource);
-    }
-    else {
-        if (fs_extra_1.default.existsSync(oldAsarSource)) {
-            await fs.unlink(oldAsarSource);
-        }
-        await fs.rename(asarSource, oldAsarSource);
-    }
-    // creating patched app.asar
-    await asar_1.default.createPackage(asarUnpacked, asarSource);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    // cleanup
-    if (isDev) {
-        const needLogs = process.env.NEED_LOGS === "1", 
-        // specify args for testing. use , as a delimiter
-        startArgs = (process.env.START_ARGS || "").split(",");
-        if (!needLogs) {
-            // real world test
-            child_process_1.default.spawn(path_1.default.join(sodaPlayerBase, `Soda Player.exe`), startArgs, {
-                detached: true,
-                stdio: "ignore"
+const patchSodaPlayer = async (customPatchDirectory) => {
+    const tmpDirForDownloadingPatch = os_1.default.tmpdir();
+    await patchElectronApp_1.patchElectronApp({
+        ...exports.sodaPlayerBasicConfig,
+        async patchContents({ contentsDir }) {
+            let patchDir;
+            if (customPatchDirectory) {
+                patchDir = customPatchDirectory;
+            }
+            else {
+                const downloadPatchUrl = "https://github.com/zardoy/soda-player-plus/archive/main.zip";
+                await download_1.default(downloadPatchUrl, tmpDirForDownloadingPatch, {
+                    filename: "patch-archive"
+                });
+                const patchArchive = path_1.default.join(tmpDirForDownloadingPatch, "patch-archive");
+                const adm = new adm_zip_1.default(patchArchive);
+                await new Promise(resolve => adm.extractAllToAsync("patch", true, resolve));
+                rimraf_1.default.sync(patchArchive);
+                patchDir = path_1.default.resolve(tmpDirForDownloadingPatch, "patch/soda-player-plus-main/patch");
+            }
+            await fs_extra_1.default.copy(patchDir, contentsDir, {
+                overwrite: true,
             });
+            filePathRegexps(contentsDir, [
+                {
+                    filePath: "index.html",
+                    replace: [
+                        [/<!-- Google Analytics -->.+?<!-- End Google Analytics -->/is, ""],
+                        [/<script src="vendor\/jquery\/dist\/jquery\.slim\.min\.js"/is,
+                            `<!-- PLUS SCRIPTS -->\n<script src="plus/renderer.js"></script>\n\n$&`]
+                    ]
+                },
+                {
+                    filePath: "package.json",
+                    replace: [
+                        [/js\/main\/main.js/i, "plus/main.js"]
+                    ]
+                }
+            ]);
         }
-        else {
-            child_process_1.default.execFileSync(path_1.default.join(asarBaseDir, "../Soda Player.exe"), startArgs, { stdio: "inherit" });
-        }
-    }
-    else {
-        rimraf_1.default.sync(asarUnpacked);
+    });
+    if (!customPatchDirectory) {
         rimraf_1.default.sync(path_1.default.join(tmpDirForDownloadingPatch, "patch"));
     }
 };
 exports.patchSodaPlayer = patchSodaPlayer;
-(async () => {
-    if (require.main === module) {
-        await exports.patchSodaPlayer();
-    }
-})();
