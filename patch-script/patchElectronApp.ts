@@ -72,7 +72,13 @@ export const patchElectronApp = async ({ localAppdataDir, appName, patchContents
         asarUnpacked
     );
     await new Promise(resolve => setTimeout(resolve, 500));
-    await patchContents({ contentsDir: asarUnpacked });
+    try {
+        await patchContents({ contentsDir: asarUnpacked });
+    } catch (err) {
+        // patch failed. let app use original app.asar instead of probably broken contents
+        rimraf.sync(asarUnpacked);
+        throw err;
+    }
 
     // we're not creating app.asar since electron should pick contents of app/ dir
     await fs.rename(asarSource, oldAsarSource);
