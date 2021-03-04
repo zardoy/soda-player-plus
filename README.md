@@ -13,6 +13,8 @@ Now, I'm looking for a good modern player that supports all formats like mpc, bu
 
 > Not maintained anymore. I'm done.
 
+> In soda player, press ctrl+cmd+shift+d to menu with useful info (aka debug info).
+
 ## Optional Features
 
 These features are enabled by default:
